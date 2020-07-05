@@ -62,7 +62,8 @@ def set_round(author, round_name):
                         reply = "A round named " + round_name + " has been created.\n" \
                                 "Use `?question [content]` to add questions, then, use `?answer [content]` to add " \
                                 "the answer. Use `?round [round_name]` to move to the next round or `?finish` to " \
-                                "finish."
+                                "finish.\n" \
+                                "If this round is a music round, use `?music` before you continue! :musical_note:"
                     else:
                         reply = "Please name your round! Try again :smile:\nUsage: `?round [round_name]`"
                 else:
@@ -75,18 +76,40 @@ def set_round(author, round_name):
     return reply
 
 
+def set_round_music(author):
+    action = action_items.get(author)
+
+    if isinstance(action, CreateQuiz):
+        if action.current_round is not None:
+            action.toggle_music()
+            if action.current_round.is_music:
+                reply = "This round is now a music round! Use `?music` again if you change your mind :musical_note:"
+            else:
+                reply = "This round is no longer a music round :musical_note:"
+        else:
+            reply = "Start your round using `?round [round_name]` first before setting it as a music round " \
+                    ":musical_note:"
+    else:
+        reply = None
+
+    return reply
+
+
 def set_question(author, question):
     action = action_items.get(author)
 
-    # Ensures answer to previous question has been submitted.
-    if action.current_question == "":
-        if question != "":
-            action.create_question(question)
-            reply = "Question recorded, now give me the answer using `?answer [answer]` - I won't tell :wink:"
+    if isinstance(action, CreateQuiz):
+        # Ensures answer to previous question has been submitted.
+        if action.current_question == "":
+            if question != "":
+                action.create_question(question)
+                reply = "Question recorded, now give me the answer using `?answer [answer]` - I won't tell :wink:"
+            else:
+                reply = "Tell me what the question is!\nUsage: `?question [question]`."
         else:
-            reply = "Tell me what the question is!\nUsage: `?question [question]`."
+            reply = "Give me the answer to the last question first, silly :stuck_out_tongue:"
     else:
-        reply = "Give me the answer to the last question first, silly :stuck_out_tongue:"
+        reply = None
 
     return reply
 
@@ -94,30 +117,36 @@ def set_question(author, question):
 def set_answer(author, answer):
     action = action_items.get(author)
 
-    if action.current_question != "":
-        if answer != "":
-            action.add_question(answer)
-            reply = "I'll keep that a secret, promise :eyes:\n" \
-                    "From here, you can use `?question`, `?round` or `?finish` :thumbsup:"
+    if isinstance(action, CreateQuiz):
+        if action.current_question != "":
+            if answer != "":
+                action.add_question(answer)
+                reply = "I'll keep that a secret, promise :eyes:\n" \
+                        "From here, you can use `?question`, `?round` or `?finish` :thumbsup:"
+            else:
+                reply = "Tell mw what the answer is!\nUsage: `?answer [answer]`."
         else:
-            reply = "Tell mw what the answer is!\nUsage: `?answer [answer]`."
+            reply = "I don't know what this is the answer to :upside down:"
     else:
-        reply = "I don't know what this is the answer to :upside down:"
+        reply = None
 
     return reply
 
 
 def finish(author):
-    # TODO: ask user to input linking rounds, music rounds and if rounds should be random order.
     action = action_items.get(author)
 
-    if len(action.rounds) > 0 and len(action.rounds[0].questions) > 0:
-        action.finish()
-        reply = "All done! Your quiz is locked and loaded :sunglasses:"
-        print(author.name + " has completed a quiz which has been saved.")
-        action_items.pop(author)
+    if isinstance(action, CreateQuiz):
+        current_round = action.current_round
+        if current_round is not None and len(current_round.questions) > 0:
+            action.finish()
+            reply = "All done! Your quiz is locked and loaded :sunglasses:"
+            print(author.name + " has completed a quiz which has been saved.")
+            action_items.pop(author)
+        else:
+            reply = "You haven't added any questions, dafty :nerd:"
     else:
-        reply = "You haven't added any questions, dafty :nerd:"
+        reply = None
 
     return reply
 

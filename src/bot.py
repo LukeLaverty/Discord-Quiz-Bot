@@ -45,6 +45,9 @@ async def on_message(msg):
             elif "?round".startswith(command):
                 message = dm.set_round(author, content)
 
+            elif "?music".startswith(command):
+                message = dm.set_round_music(author)
+
             elif "?question".startswith(command):
                 message = dm.set_question(author, content)
 
@@ -113,6 +116,7 @@ async def on_message(msg):
 
             # Adds formatting to message where '{0.author.[...]}' is used.
             reply = reply.format(msg)
+
 
             await msg.channel.send(reply)
             # Command message deleted such that quiz questions are not interrupted by bot commands.

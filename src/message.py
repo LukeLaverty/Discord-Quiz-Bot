@@ -70,7 +70,7 @@ def show_leaderboard(players):
     reply = "The current standings:\n"
 
     if len(players) == 0:
-        reply += "` `"
+        reply += "` `\n "
     else:
         reply += "```md\n"
         counter = 1

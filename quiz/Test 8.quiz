@@ -1,0 +1,15 @@
+{
+    "round 1": {
+        "name": "General Knowledge",
+        "questions": [
+            {"question": "What colour is Irn Bru?", "answer": "Sunset yellow"},
+            {"question": "In what year did Hamilton Academical FC earn promotion to the Premiership?", "answer": "2014"}
+        ]
+    },
+    "round 2": {
+        "name": "Science",
+        "questions": [
+            {"question": "What does USB stand for?", "answer": "Universal Serial Bus"}
+        ]
+    }
+}
