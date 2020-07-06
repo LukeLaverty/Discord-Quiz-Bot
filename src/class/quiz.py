@@ -48,8 +48,8 @@ class Quiz:
 
             # Finishes round:
             elif self.current_question == len(self.rounds[self.current_round].questions):
-                reply = "The round is over! Please input your answers using `?score [score]` - my next message will" \
-                        " be the correct answers :thumbsup:\n "
+                reply = "The round is over! Please input your answers and then score using `?points [points]` - my " \
+                        "next message will be the correct answers :thumbsup:\n "
                 self.current_question += 1  # Allows bot to know round is finished.
 
             # Displays answers:
@@ -59,8 +59,10 @@ class Quiz:
                 self.current_round += 1
 
         else:
+            self.sort_players()
             reply = "We're all done! Lets check in with the final standings:\n"
             reply += show_leaderboard(self.players)
+            reply += "Congratulations to " + str(self.players[0].user.display_name) + " :tada:\n"
             reply += "You can see the leaderboard again using `?leaderboard`. To finish, use `?drop`!"
 
         return reply
@@ -75,6 +77,9 @@ class Quiz:
                 return p
 
         return None
+
+    def sort_players(self):
+        self.players.sort(key=lambda p: p.points, reverse=True)
 
     def __read_file(self):
         filename = quiz_dir + "/" + self.name

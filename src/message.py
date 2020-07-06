@@ -67,6 +67,12 @@ def round_answers(answers):
 
 
 def show_leaderboard(players):
+    """
+    Generates a leaderboard in text.
+
+    :param players: list of player objects sorted in descending order of points.
+    :return: string display of leaderboard.
+    """
     reply = "The current standings:\n"
 
     if len(players) == 0:
@@ -75,9 +81,9 @@ def show_leaderboard(players):
         reply += "```md\n"
         counter = 1
 
-        players.sort(reverse=True)
         for player in players:
-            reply += str(counter) + ". " + player.user.nick + " - " + str(player.points) + "\n"
-        reply += "```\n "
+            reply += str(counter) + ". " + player.user.display_name + " - " + str(player.points) + "\n"
+            counter += 1
+        reply += "```\n"
 
     return reply

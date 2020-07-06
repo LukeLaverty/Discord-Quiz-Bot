@@ -8,6 +8,7 @@ This specified channel name can be changed from within 'bot.py'.
 The discord API token must also be entered in 'bot.py'.
 
 ### Features to Implement
+* Improved JSON writing;
 * Editing functionality during and after creation of quizzes;
 * Ensuring file validity, and that only files ending '.quiz' are displayed;
 * Allowing music round (through possible use of Spotify API);
@@ -17,4 +18,6 @@ The discord API token must also be entered in 'bot.py'.
 * Message formatting improvements.
 
 ### Known Issues
-* Music rounds are unable to be automated due to music bots not accepting commands from other bots.
+* Music rounds are unable to be automated due to music bots not accepting commands from other bots;
+* Exception is thrown if file name is invalid - not handled;
+* If `?music` is toggled repeatedly the file does not write correctly.

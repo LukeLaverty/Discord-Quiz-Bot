@@ -4,4 +4,4 @@ class Player:
         self.points = 0
 
     def update_points(self, change):
-        self.points += int(change)
+        self.points += change

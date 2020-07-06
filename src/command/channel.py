@@ -64,13 +64,13 @@ def points(author, score_add):
         player = quiz.contains_player(author)
         if player is not None:
             try:
-                score = int(score_add)
+                score = float(score_add)
             except ValueError:
                 score = -1
             if score >= 0:
                 player.update_points(score)
                 reply = "Your score has been updated {0.author.mention} - your new total is " \
-                        + str(player.score) + " :brain:"
+                        + str(player.points) + " :brain:"
             else:
                 reply = "Please enter a valid score {0.author.mention} :confused:"
         else:
@@ -85,6 +85,7 @@ def leaderboard():
     quiz = get_ongoing_quiz(action_items)
 
     if quiz is not None:
+        quiz.sort_players()
         reply = show_leaderboard(quiz.players)
     else:
         reply = None
