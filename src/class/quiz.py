@@ -92,11 +92,10 @@ class Quiz:
         rounds = []
 
         for quiz_round in quiz_data:
-            round_data = quiz_data[quiz_round]
-            name = round_data["name"]
-            is_music = round_data["is_music"]
+            name = quiz_round["name"]
+            is_music = quiz_round["is_music"]
             questions = []
-            for question in round_data["questions"]:
+            for question in quiz_round["questions"]:
                 question_dict = question
                 questions.append(question_dict)
 
@@ -156,45 +155,21 @@ class CreateQuiz:
         self.__finish_round()
 
         filename = quiz_dir + "/" + self.name + ".quiz"
-        tab = "    "
+
+        rounds = []
+
+        # Note: 'round' is a protected attribute.
+        for quiz_round in self.rounds:
+            round_dict = {
+                "name": quiz_round.name,
+                "is_music": quiz_round.is_music,
+                "questions": quiz_round.questions
+            }
+
+            rounds.append(round_dict)
 
         with open(filename, "a+") as file:
-            file.write("{" + "\n")
-
-            round_counter = 1
-            # Note: 'round' is a protected attribute.
-            for quiz_round in self.rounds:
-                if round_counter != 1:
-                    file.write(",\n")
-
-                file.write(tab)
-                file.write("\"round " + str(round_counter) + "\": {")
-                file.write("\n")
-
-                file.write(tab * 2)
-                file.write("\"name\": \"" + quiz_round.name + "\",")
-                file.write("\n")
-
-                file.write(tab * 2)
-                file.write("\"is_music\": " + str(quiz_round.is_music).lower() + ",")
-                file.write("\n")
-
-                file.write(tab * 2)
-                file.write("\"questions\": [")
-                file.write("\n")
-
-                question_counter = 1
-                for question in quiz_round.questions:
-                    if question_counter != 1:
-                        file.write(",\n")
-                    file.write(tab * 3)
-                    json.dump(question, file)
-                    question_counter += 1
-
-                file.write("\n" + tab * 2 + "]" + "\n" + tab + "}")
-                round_counter += 1
-
-            file.write("\n}")
+            json.dump(rounds, file, indent=2)
 
 
 # Necessary to allow user select state.

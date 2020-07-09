@@ -8,7 +8,6 @@ This specified channel name can be changed from within 'bot.py'.
 The discord API token must also be entered in 'bot.py'.
 
 ### Features to Implement
-* Improved JSON writing;
 * Editing functionality during and after creation of quizzes;
 * Ensuring file validity, and that only files ending '.quiz' are displayed;
 * Allowing music round (through possible use of Spotify API);
