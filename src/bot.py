@@ -26,7 +26,7 @@ async def on_message(msg):
         content = ""
 
     # Ensures message is of the command format.
-    if cmd_pattern.match(command):
+    if cmd_pattern.search(command) is not None:
 
         author = msg.author
 

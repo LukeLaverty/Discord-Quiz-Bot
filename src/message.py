@@ -36,6 +36,7 @@ def available_quizzes():
     file_list = "```md\n"
     for file in avail_files:
         name = os.path.splitext(file)[0]
+        name = __sanitise_markdown(name)
         file_list += str(counter) + ". " + name + "\n"
         counter += 1
     file_list += "```\n"
@@ -82,8 +83,17 @@ def show_leaderboard(players):
         counter = 1
 
         for player in players:
-            reply += str(counter) + ". " + player.user.display_name + " - " + str(player.points) + "\n"
+            reply += str(counter) + ". " + __sanitise_markdown(player.user.display_name) + " - " + str(player.points) \
+                     + "\n"
             counter += 1
         reply += "```\n"
 
     return reply
+
+
+def __sanitise_markdown(string):
+    return string.replace("#", "")\
+        .replace("*", "")\
+        .replace(">", "")\
+        .replace("+", "")\
+        .replace("`", "")

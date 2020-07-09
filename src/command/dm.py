@@ -1,5 +1,6 @@
 # All methods will return the appropriate reply (and None if invalid input).
 
+import re
 from general import action_items
 from quiz import *
 
@@ -24,7 +25,7 @@ def create(author):
                 "You can exit this at any time with `?drop`, but your progress will not be saved.\n" \
                 "Firstly, we need to name your quiz! Use `?name [quiz_name]` to do so.\n" \
                 "Try something like:\n" \
-                "> \"Luke's Quiz 28-07-2001\""
+                "> Luke's Quiz 28-07-2001"
 
     return reply
 
@@ -34,9 +35,14 @@ def set_name(author, input_name):
 
     if isinstance(action, CreateQuiz):
         if input_name != "":
-            action.set_name(input_name)
-            reply = "Your quiz has been named :tada:\nStart your first round by using `?round [round_name]`!"
-            print("A quiz named " + input_name + " has been initialised by " + author.name)
+            # Checks filename is valid for Windows file system.
+            pattern = re.compile("[<>:\"/\\|?*]")
+            if pattern.search(input_name) is not None:
+                reply = "Please ensure your file name avoids the following illegal characters: `<>:\"/\\|?*`"
+            else:
+                action.set_name(input_name)
+                reply = "Your quiz has been named :tada:\nStart your first round by using `?round [round_name]`!"
+                print("A quiz named " + input_name + " has been initialised by " + author.name)
         else:
             reply = "Please pick a name for your quiz!\nUsage: `?name [quiz_name]`."
     else:
@@ -124,7 +130,7 @@ def set_answer(author, answer):
                 reply = "I'll keep that a secret, promise :eyes:\n" \
                         "From here, you can use `?question`, `?round` or `?finish` :thumbsup:"
             else:
-                reply = "Tell mw what the answer is!\nUsage: `?answer [answer]`."
+                reply = "Tell me what the answer is!\nUsage: `?answer [answer]`."
         else:
             reply = "I don't know what this is the answer to :upside down:"
     else:
