@@ -7,13 +7,14 @@ This specified channel name can be changed from within 'bot.py'.
 
 The discord API token must also be entered in 'bot.py'.
 
+A minimum of 2 players is required to start a quiz.
+
 ### Features to Implement
 * Editing functionality during and after creation of quizzes;
 * Ensuring file validity, and that only files ending '.quiz' are displayed;
 * Allowing music round (through possible use of Spotify API);
 * Displaying questions in random order;
-* Ensuring a minimum number of players before proceeding;
-* Ensuring all players have entered their score each round before proceeding;
+* Allowing the quiz to progress through reactions rather than commands;
 * Message formatting improvements.
 
 ### Known Issues

@@ -1,5 +1,5 @@
 import json
-from message import quiz_dir, round_answers, show_leaderboard
+import message
 from player import *
 
 
@@ -16,23 +16,32 @@ class Quiz:
     def __init__(self, name):
         self.name = name
         self.players = []
+        self.round_scores_entered = 0  # Ensures all players have entered their score before progressing.
         self.rounds = self.__read_file()
         self.current_round = -1
         self.current_question = -1
 
     def start(self) -> str:
-        self.current_round += 1
-        reply = "*From here on out, use `?next` to move through the quiz!*\n"
-        reply += self.next()
+        if len(self.players) >= 2:
+            reply = message.clear_chat()
+            self.current_round += 1
+            reply += "*From here on out, use `?next` to move through the quiz!*\n"
+            reply += self.next()
+        else:
+            reply = "You need at least 2 players to join your quiz, {0.author.mention} :family:"
+
         return reply
 
-    def next(self) -> str:
+    def next(self):
         if self.current_round < len(self.rounds):
-            # Initialises round:
             if self.current_question == -1:
-                reply = "> **Round " + str(self.current_round + 1) + ": " + self.rounds[self.current_round].name + \
-                        "**\n "
-                self.current_question += 1
+                if self.round_scores_entered == len(self.players):
+                    self.round_scores_entered = 0
+                    reply = "> **Round " + str(self.current_round + 1) + ": " + self.rounds[self.current_round].name + \
+                            "**\n "
+                    self.current_question += 1
+                else:
+                    reply = "Be careful, not all players have entered their scores yet :eyes:"
 
             # Displays question:
             elif self.current_question < len(self.rounds[self.current_round].questions):
@@ -46,22 +55,21 @@ class Quiz:
 
                 self.current_question += 1
 
-            # Finishes round:
-            elif self.current_question == len(self.rounds[self.current_round].questions):
-                reply = "The round is over! Please input your answers and then score using `?points [points]` - my " \
-                        "next message will be the correct answers :thumbsup:\n "
-                self.current_question += 1  # Allows bot to know round is finished.
+                # Finishes round:
+                if self.current_question == len(self.rounds[self.current_round].questions):
+                    reply += "The round is over! Please post your answers - my next message will be the correct " \
+                             "answers :thumbsup:\n "
 
             # Displays answers:
             else:
-                reply = round_answers(self.rounds[self.current_round].questions)
+                reply = message.round_answers(self.rounds[self.current_round].questions)
                 self.current_question = -1
                 self.current_round += 1
 
         else:
             self.sort_players()
             reply = "We're all done! Lets check in with the final standings:\n"
-            reply += show_leaderboard(self.players)
+            reply += message.show_leaderboard(self.players)
             reply += "Congratulations to " + str(self.players[0].user.display_name) + " :tada:\n"
             reply += "You can see the leaderboard again using `?leaderboard`. To finish, use `?drop`!"
 
@@ -82,7 +90,7 @@ class Quiz:
         self.players.sort(key=lambda p: p.points, reverse=True)
 
     def __read_file(self):
-        filename = quiz_dir + "/" + self.name
+        filename = message.quiz_dir + "/" + self.name
 
         with open(filename) as data:
             raw = data.read()
@@ -154,7 +162,7 @@ class CreateQuiz:
     def finish(self):
         self.__finish_round()
 
-        filename = quiz_dir + "/" + self.name + ".quiz"
+        filename = message.quiz_dir + "/" + self.name + ".quiz"
 
         rounds = []
 

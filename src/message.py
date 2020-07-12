@@ -62,7 +62,7 @@ def round_answers(answers):
         counter += 1
 
     # Ensures new line is taken.
-    reply += " "
+    reply += "\nPlease enter your score using `?points [points]` :brain:"
 
     return reply
 
@@ -88,6 +88,11 @@ def show_leaderboard(players):
             counter += 1
         reply += "```\n"
 
+    return reply
+
+
+def clear_chat():
+    reply = ".\n" * 60
     return reply
 
 

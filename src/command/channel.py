@@ -24,6 +24,7 @@ def join(author):
         quiz = get_ongoing_quiz(action_items)
         if quiz is not None:
             quiz.add_player(author)
+            quiz.round_scores_entered += 1  # Ensures quiz is allowed to start.
             reply = "{0.author.mention} is in :sunglasses:"
         else:
             reply = None
@@ -69,6 +70,7 @@ def points(author, score_add):
                 score = -1
             if score >= 0:
                 player.update_points(score)
+                quiz.round_scores_entered += 1
                 reply = "Your score has been updated {0.author.mention} - your new total is " \
                         + str(player.points) + " :brain:"
             else:

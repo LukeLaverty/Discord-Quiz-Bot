@@ -22,9 +22,8 @@ def create(author):
         action_items[author] = CreateQuiz()
 
         reply = "Okay, lets get started! We're entering **create mode**. " \
-                "You can exit this at any time with `?drop`, but your progress will not be saved.\n" \
-                "Firstly, we need to name your quiz! Use `?name [quiz_name]` to do so.\n" \
-                "Try something like:\n" \
+                "You can exit at any time with `?drop`, but your progress will not be saved.\n" \
+                "Firstly, we need to name your quiz! Use `?name [quiz_name]` to do so. Try something like:\n" \
                 "> Luke's Quiz 28-07-2001"
 
     return reply
