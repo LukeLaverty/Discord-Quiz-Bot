@@ -1,13 +1,24 @@
 import os
 
+# Quiz save directory.
 quiz_dir = "../quiz"
 
 
 def get_files():
+    """
+    Gets list of files from save directory.
+
+    :return: list of files in save directory.
+    """
     return os.listdir(quiz_dir)
 
 
 def help_message():
+    """
+    Generates user help message as string.
+
+    :return: user help message.
+    """
     message = "Here's what you can do, {0.author.mention}:\n" \
               ">>> " \
               "__From anywhere:__\n" \
@@ -16,7 +27,7 @@ def help_message():
               "__From a channel:__\n" \
               "  `?create` will prompt you in your DMs to create a new quiz.\n" \
               "  `?edit` will prompt you in your DMs to edit a quiz.\n" \
-              "  `?quiz` will allow you to play your quiz.\n" \
+              "  `?play` will allow you to play your quiz.\n" \
               "__During a quiz:__\n" \
               "  `?join` will add you to the quiz.\n" \
               "  `?next` will display the next question, answers if at the end of the round, and next round.\n" \
@@ -29,6 +40,11 @@ def help_message():
 
 
 def available_quizzes():
+    """
+    Generates a numbered list of available quizzes for user to select from.
+
+    :return: list of available quizzes.
+    """
     avail_files = get_files()
 
     counter = 1
@@ -50,6 +66,12 @@ def available_quizzes():
 
 
 def round_answers(answers):
+    """
+    Generates a string of round answers.
+
+    :param answers: the answers to the round.
+    :return: the string of answers.
+    """
     ans_list = []
     for question in answers:
         ans_list.append(question.get("answer"))
@@ -92,11 +114,22 @@ def show_leaderboard(players):
 
 
 def clear_chat():
+    """
+    Prints a series of new lines to clear 'pub-quiz' channel before new quiz.
+
+    :return: string series of new lines.
+    """
     reply = ".\n" * 60
     return reply
 
 
 def __sanitise_markdown(string):
+    """
+    Sanitises string of characters reserved in markdown.
+
+    :param string: the string to be sanitised.
+    :return: sanitised string.
+    """
     return string.replace("#", "")\
         .replace("*", "")\
         .replace(">", "")\

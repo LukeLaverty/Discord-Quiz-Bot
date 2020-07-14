@@ -1,11 +1,17 @@
 import discord
 import re
+# Local modules.
+import quiz
 from command import general, channel, dm
-
-cmd_pattern = re.compile("\\?.+")
 
 TOKEN = ""
 client = discord.Client()
+
+# Dictionary associates each user with an action class.
+action_items = {}
+
+# Pattern to check message is a bot command.
+cmd_pattern = re.compile("\\?.+")
 
 
 @client.event
@@ -33,35 +39,48 @@ async def on_message(msg):
         # Checks if message is direct message.
         if isinstance(msg.channel, discord.DMChannel):
 
+            # General commands.
             if "?help".startswith(command):
                 message = general.get_help()
 
             elif "?drop".startswith(command):
-                message = dm.exit_action(author)
-
-            elif "?name".startswith(command):
-                message = dm.set_name(author, content)
-
-            elif "?round".startswith(command):
-                message = dm.set_round(author, content)
-
-            elif "?music".startswith(command):
-                message = dm.set_round_music(author)
-
-            elif "?question".startswith(command):
-                message = dm.set_question(author, content)
-
-            elif "?answer".startswith(command):
-                message = dm.set_answer(author, content)
-
-            elif "?finish".startswith(command):
-                message = dm.finish(author)
-
-            elif "?create".startswith(command):
-                message = dm.create(author)
+                message = general.exit_action(author, action_items)
 
             else:
-                message = "You can't use that command here :disappointed_relieved:\nSee `?help`."
+
+                current_action = action_items.get(author)
+
+                # Commands when creating a quiz.
+                if isinstance(current_action, quiz.CreateQuiz):
+
+                    if "?name".startswith(command):
+                        message = dm.set_name(author, current_action, content)
+
+                    elif "?round".startswith(command):
+                        message = dm.set_round(current_action, content)
+
+                    elif "?music".startswith(command):
+                        message = dm.set_round_music(current_action)
+
+                    elif "?question".startswith(command):
+                        message = dm.set_question(current_action, content)
+
+                    elif "?answer".startswith(command):
+                        message = dm.set_answer(current_action, content)
+
+                    elif "?finish".startswith(command):
+                        message = dm.finish(author, action_items)
+
+                    else:
+                        message = "You can't use this command while creating a quiz :upside_down:"
+
+                else:
+
+                    if "?create".startswith(command):
+                        message = dm.create(author, action_items)
+
+                    else:
+                        message = "You can't use that command here :disappointed_relieved:\nSee `?help`."
 
             if message is None:
                 message = "That command is invalid :disappointed_relieved:\nSee `?help`."
@@ -73,43 +92,57 @@ async def on_message(msg):
 
             message = None
 
+            # General commands:
             if "?help".startswith(command):
                 reply = general.get_help()
 
             elif "?drop".startswith(command):
-                reply = channel.exit_action(author)
-
-            elif "?join".startswith(command):
-                reply = channel.join(author)
-
-            elif "?start".startswith(command):
-                reply = channel.start(author)
-
-            elif "?next".startswith(command):
-                reply = channel.quiz_next(author)
-
-            elif "?points".startswith(command):
-                reply = channel.points(author, content)
-
-            elif "?leaderboard".startswith(command):
-                reply = channel.leaderboard()
-
-            elif "?create".startswith(command):
-                reply = channel.create()
-                message = dm.channel_create()
-
-            elif "?edit".startswith(command):
-                reply = channel.create()
-                message = dm.channel_edit()
-
-            elif "?quiz".startswith(command):
-                reply = channel.play(author)
-
-            elif re.compile("\\?\\d+").match(command):
-                reply = channel.select_quiz(author, command)
+                reply = general.exit_action(author, action_items)
 
             else:
-                reply = "You can't use that command here :disappointed_relieved:\nSee `?help`."
+
+                current_action = action_items.get(author)
+
+                # Commands during ongoing quiz:
+                if quiz.get_ongoing_quiz(action_items) is not None:
+
+                    if "?start".startswith(command):
+                        reply = channel.start(current_action)
+
+                    elif "?join".startswith(command):
+                        reply = channel.join(author, action_items)
+
+                    elif "?next".startswith(command):
+                        reply = channel.quiz_next(current_action, content)
+
+                    elif "?points".startswith(command):
+                        reply = channel.points(author, action_items, content)
+
+                    elif "?leaderboard".startswith(command):
+                        reply = channel.leaderboard(action_items)
+
+                    else:
+                        reply = "You cannot use this command during a quiz :upside_down:"
+
+                # Commands when no quiz is ongoing:
+                else:
+
+                    if "?create".startswith(command):
+                        reply = channel.create()
+                        message = dm.channel_create()
+
+                    elif "?edit".startswith(command):
+                        reply = channel.create()
+                        message = dm.channel_edit()
+
+                    elif "?play".startswith(command):
+                        reply = channel.play(author, action_items)
+
+                    elif re.compile("\\?\\d+").match(command):
+                        reply = channel.select_quiz(author, action_items, command)
+
+                    else:
+                        reply = "You can't use that command here :disappointed_relieved:\nSee `?help`."
 
             if reply is None:
                 reply = "That command is invalid :disappointed_relieved:\nSee `?help`."
@@ -129,12 +162,21 @@ async def on_message(msg):
 
 @client.event
 async def on_ready():
+    """
+    Checks bot loads into servers successfully.
+    """
     for guild in client.guilds:
         print("Loaded into server \"" + guild.name + "\" successfully")
 
 
 @client.event
 async def send_dm(member, content):
+    """
+    Sends a direct message to a user.
+
+    :param member: user to which message should be sent.
+    :param content: the content of the message.
+    """
     dm_channel = await member.create_dm()
     await dm_channel.send(content)
 
