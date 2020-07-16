@@ -1,3 +1,4 @@
+import json
 # Local modules.
 import quiz
 import message
@@ -198,9 +199,16 @@ def select_quiz(author, action_items, command):
             files = message.get_files()
 
             if file_no <= len(files):
-                action_items[author] = quiz.Quiz(files[file_no - 1])
-                reply = "We are ready to go, @everyone, use `?join` to add yourself to the quiz!\n" \
-                        "When we're ready to go, the quiz-master can use `?start` :call_me:"
+                try:
+                    action_items[author] = quiz.Quiz(files[file_no - 1])
+                    reply = "We are ready to go, @everyone, use `?join` to add yourself to the quiz!\n" \
+                            "When we're ready to go, the quiz-master can use `?start` :call_me:"
+                # Where the file was unable to be initialised into a round.
+                except TypeError:
+                    reply = "Sorry, I'm not able to load that quiz :thinking:\nTry another quiz using `?[number]`."
+                # Where the JSON is invalid.
+                except json.JSONDecodeError:
+                    reply = "Sorry, that quiz file is not valid :worried:\nTry another quiz using `?[number]`."
 
             else:
                 reply = "Please select a file number within the range displayed."

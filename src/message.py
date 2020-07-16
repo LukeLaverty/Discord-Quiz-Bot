@@ -6,11 +6,17 @@ quiz_dir = "../quiz"
 
 def get_files():
     """
-    Gets list of files from save directory.
+    Gets list of files from save directory ending with '.quiz'.
 
     :return: list of files in save directory.
     """
-    return os.listdir(quiz_dir)
+    raw_list = os.listdir(quiz_dir)
+    quiz_list = []
+    for file in raw_list:
+        if file.endswith(".quiz"):
+            quiz_list.append(file)
+
+    return quiz_list
 
 
 def help_message():
