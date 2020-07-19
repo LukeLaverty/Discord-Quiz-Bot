@@ -74,11 +74,13 @@ def set_round(current_action, round_name):
                 # Ensures round name is not empty.
                 if round_name != "":
                     current_action.next_round(round_name)
-                    reply = "A round named " + round_name + " has been created.\n" \
-                                                            "Use `?question [content]` to add questions, then, use `?answer [content]` to add " \
-                                                            "the answer. Use `?round [round_name]` to move to the next round or `?finish` to " \
-                                                            "finish.\n" \
-                                                            "If this round is a music round, use `?music` before you continue! :musical_note:"
+                    reply = "A round named " + round_name + \
+                            " has been created.\n" \
+                            "Use `?question [content]` to add questions, then, use `?answer [content]` to add " \
+                            "the answer. Use `?round [round_name]` to move to the next round or `?finish` to " \
+                            "finish.\n" \
+                            "If this round is a music round, use `?music` before you continue! :musical_note:\n" \
+                            "Similarly, if this round is a picture round, use `?picture` :frame_photo:"
 
                 else:
                     reply = "Please name your round! Try again :smile:\nUsage: `?round [round_name]`"
@@ -110,6 +112,28 @@ def set_round_music(current_action):
     else:
         reply = "Start your round using `?round [round_name]` first before setting it as a music round " \
                 ":musical_note:"
+
+    return reply
+
+
+def set_round_picture(current_action):
+    """
+    Toggles the current round as a picture round (or not).
+
+    :param current_action: the current action of the user.
+    :return: reply to user.
+    """
+    if current_action.current_round is not None:
+        current_action.toggle_picture()
+
+        if current_action.current_round.is_picture:
+            reply = "This round is now a picture round! Use `?picture` again if you change your mind :frame_photo:"
+        else:
+            reply = "This round is no longer a picture round :frame_photo:"
+
+    else:
+        reply = "Start your round using `?round [round_name]` first before setting it as a picture round " \
+                ":frame_photo:"
 
     return reply
 

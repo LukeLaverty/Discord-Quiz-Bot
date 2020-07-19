@@ -62,6 +62,9 @@ async def on_message(msg):
                     elif "?music".startswith(command):
                         message = dm.set_round_music(current_action)
 
+                    elif "?picture".startswith(command):
+                        message = dm.set_round_picture(current_action)
+
                     elif "?question".startswith(command):
                         message = dm.set_question(current_action, content)
 
@@ -150,7 +153,13 @@ async def on_message(msg):
             # Adds formatting to message where '{0.author.[...]}' is used.
             reply = reply.format(msg)
 
-            await msg.channel.send(reply)
+            # Checks for image link to embed image.
+            if reply.startswith("http"):
+                embed = discord.Embed()
+                embed.set_image(url=reply)
+                await msg.channel.send(embed=embed)
+            else:
+                await msg.channel.send(reply)
             # Command message deleted such that quiz questions are not interrupted by bot commands.
             await msg.delete()
 

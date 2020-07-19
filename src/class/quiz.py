@@ -86,13 +86,18 @@ class Quiz:
                     if self.rounds[self.current_round].is_music is True:
                         reply = str(self.current_question + 1) + ": *now playing* :musical_note:"
 
+                    # Checks if current round is picture round:
+                    if self.rounds[self.current_round].is_picture is True:
+                        reply = question
+
                     else:
                         reply = str(self.current_question + 1) + ": " + question
 
                     self.current_question += 1
 
                     # Finishes round:
-                    if self.current_question == len(self.rounds[self.current_round].questions):
+                    if self.current_question == len(self.rounds[self.current_round].questions) and \
+                            self.rounds[self.current_round].is_picture is False:
                         reply += "\nThe round is over! Please post your answers - my next message will be the correct" \
                                  " answers :thumbsup:\n "
 
@@ -166,18 +171,19 @@ class Quiz:
         for quiz_round in quiz_data:
             name = quiz_round["name"]
             is_music = quiz_round["is_music"]
+            is_picture = quiz_round["is_picture"]
             questions = []
             for question in quiz_round["questions"]:
                 question_dict = question
                 questions.append(question_dict)
 
-            rounds.append(_Round(name, questions, is_music))
+            rounds.append(_Round(name, questions, is_music, is_picture))
 
         return rounds
 
 
 class _Round:
-    def __init__(self, name, questions, is_music):
+    def __init__(self, name, questions, is_music, is_picture):
         """
         Initialises a quiz round.
 
@@ -191,7 +197,11 @@ class _Round:
             self.questions = []
 
         self.name = name
-        self.is_linking = False
+
+        if is_picture is not None:
+            self.is_picture = is_picture
+        else:
+            self.is_picture = False
 
         if is_music is not None:
             self.is_music = is_music
@@ -251,6 +261,12 @@ class CreateQuiz:
         """
         self.current_round.is_music = not self.current_round.is_music
 
+    def toggle_picture(self):
+        """
+        Toggles whether the round is a picture round.
+        """
+        self.current_round.is_picture = not self.current_round.is_picture
+
     def next_round(self, name):
         """
         Commits the previous round and creates a new one.
@@ -258,7 +274,7 @@ class CreateQuiz:
         :param name: the name of the new round.
         """
         self.__finish_round()
-        self.current_round = _Round(name, None, None)
+        self.current_round = _Round(name, None, None, None)
 
     def __finish_round(self):
         """
@@ -282,6 +298,7 @@ class CreateQuiz:
             round_dict = {
                 "name": quiz_round.name,
                 "is_music": quiz_round.is_music,
+                "is_picture": quiz_round.is_picture,
                 "questions": quiz_round.questions
             }
 

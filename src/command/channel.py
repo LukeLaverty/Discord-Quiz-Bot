@@ -201,7 +201,7 @@ def select_quiz(author, action_items, command):
             if file_no <= len(files):
                 try:
                     action_items[author] = quiz.Quiz(files[file_no - 1])
-                    reply = "We are ready to go, @everyone, use `?join` to add yourself to the quiz!\n" \
+                    reply = "We are ready to go, @everyon, use `?join` to add yourself to the quiz!\n" \
                             "When we're ready to go, the quiz-master can use `?start` :call_me:"
                 # Where the file was unable to be initialised into a round.
                 except TypeError:

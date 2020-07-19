@@ -12,8 +12,6 @@ A minimum of 2 players is required to start a quiz.
 ### Features to Implement
 * Editing functionality during and after creation of quizzes;
 * Allowing music round (through possible use of Spotify API);
-* Allow picture rounds;
-* Displaying questions in random order;
 * Allowing players to leave;
 * Allowing the quiz to progress through reactions rather than commands.
 
