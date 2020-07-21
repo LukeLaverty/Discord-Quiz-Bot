@@ -4,7 +4,7 @@ import re
 import quiz
 from command import general, channel, dm
 
-TOKEN = ""
+TOKEN = "NzI0Mjc5ODAxNjk4ODQ0NzIz.XxCCMA.tDM9uFv7Y9AL9RAmJucgyPljS5M"
 client = discord.Client()
 
 # Dictionary associates each user with an action class.
@@ -114,6 +114,9 @@ async def on_message(msg):
 
                     elif "?join".startswith(command):
                         reply = channel.join(author, action_items)
+
+                    elif "?quit".startswith(command):
+                        reply = channel.leave(author, action_items)
 
                     elif "?next".startswith(command):
                         reply = channel.quiz_next(current_action, content)
