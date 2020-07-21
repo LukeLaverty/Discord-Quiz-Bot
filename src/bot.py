@@ -115,6 +115,9 @@ async def on_message(msg):
                     elif "?join".startswith(command):
                         reply = channel.join(author, action_items)
 
+                    elif "?quit".startswith(command):
+                        reply = channel.leave(author, action_items)
+
                     elif "?next".startswith(command):
                         reply = channel.quiz_next(current_action, content)
 

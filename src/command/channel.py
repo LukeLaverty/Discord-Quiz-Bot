@@ -9,7 +9,7 @@ def join(author, action_items):
     Joins user to ongoing quiz.
 
     :param author: user to be added to quiz.
-    :param action_items: the dict of action_items.
+    :param action_items: the dict of action items.
     :return: reply to user.
     """
     action = action_items.get(author)
@@ -20,12 +20,41 @@ def join(author, action_items):
         current_quiz = quiz.get_ongoing_quiz(action_items)
 
         if current_quiz is not None:
-            current_quiz.add_player(author)
-            current_quiz.round_scores_entered += 1  # Ensures quiz is allowed to start.
-            reply = "{0.author.mention} is in :sunglasses:"
+            if current_quiz.current_question == -1:
+                current_quiz.add_player(author)
+                current_quiz.round_scores_entered += 1  # Ensures quiz is allowed to start.
+                reply = "{0.author.mention} is in :sunglasses:"
+            else:
+                reply = "Sorry, {0.author.mention}, you can't join mid-round! :upside_down:"
 
         else:
             reply = None
+
+    return reply
+
+
+def leave(author, action_items):
+    """
+    Allows user to leave ongoing quiz.
+
+    :param author: user wishing to leave.
+    :param action_items: the dict of action items.
+    :return: reply to user.
+    """
+    current_quiz = quiz.get_ongoing_quiz(action_items)
+
+    if current_quiz is not None:
+        player = current_quiz.contains_player(author)
+
+        if player is not None:
+            current_quiz.players.pop(author)
+            reply = "You have left the quiz, {0.author.mention} :wave:"
+
+        else:
+            reply = "You are not currently in a quiz, {0.author.mention} :wave:"
+
+    else:
+        reply = None
 
     return reply
 
@@ -87,30 +116,36 @@ def points(author, action_items, score_add):
     current_quiz = quiz.get_ongoing_quiz(action_items)
 
     if current_quiz is not None:
-        player = current_quiz.contains_player(author)
 
-        if player is not None:
-            try:
-                score = float(score_add)
-            except ValueError:
-                score = -1
+        if current_quiz.current_question != len(current_quiz.rounds[current_quiz.current_round].questions):
 
-            if score >= 0:
-                if player.has_set_round_score is False:
-                    player.update_points(score)
-                    player.has_set_round_score = True
-                    current_quiz.round_scores_entered += 1
-                    reply = "Your score has been updated {0.author.mention} - your new total is " \
-                            + str(player.points) + " :brain:"
+            player = current_quiz.contains_player(author)
+
+            if player is not None:
+                try:
+                    score = float(score_add)
+                except ValueError:
+                    score = -1
+
+                if score >= 0:
+                    if player.has_set_round_score is False:
+                        player.update_points(score)
+                        player.has_set_round_score = True
+                        current_quiz.round_scores_entered += 1
+                        reply = "Your score has been updated {0.author.mention} - your new total is " \
+                                + str(player.points) + " :brain:"
+
+                    else:
+                        reply = "I already have your score, {0.author.mention} :eyes:"
 
                 else:
-                    reply = "I already have your score, {0.author.mention} :eyes:"
+                    reply = "Please enter a valid score {0.author.mention} :confused:"
 
             else:
-                reply = "Please enter a valid score {0.author.mention} :confused:"
+                reply = "You're not registered for this quiz, {0.author.mention} :eyes:"
 
         else:
-            reply = "You're not registered for this quiz, {0.author.mention} :eyes:"
+            reply = "You can't enter your score until the round is over, {0.author.mention}! :upside_down:"
 
     else:
         reply = None

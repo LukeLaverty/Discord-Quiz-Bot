@@ -39,6 +39,7 @@ def help_message():
               "  `?next` will display the next question, answers if at the end of the round, and next round.\n" \
               "  `?points` allows each user to input their score for each round.\n" \
               "  `?leaderboard` will display the current leaderboard.\n" \
+              "  `?quit` allows you to leave a quiz midway.\n" \
               "__From your direct messages:__\n" \
               "  `?create` will prompt you to create a new quiz.\n" \
               "  `?edit` will allow you to edit a pre-existing quiz.\n"
@@ -108,12 +109,15 @@ def show_leaderboard(players):
         reply += "` `\n "
     else:
         reply += "```md\n"
-        counter = 1
 
-        for player in players:
-            reply += str(counter) + ". " + __sanitise_markdown(player.user.display_name) + " - " + str(player.points) \
-                     + "\n"
-            counter += 1
+        for i in range(len(players)):
+            pos = i + 1
+            while i - 1 > 0 and players[i - 1].score == players[i]:
+                pos -= 1
+
+            reply += str(pos) + ". " + __sanitise_markdown(players[i].user.display_name) + " - " + \
+                     str(players[i].points) + "\n"
+
         reply += "```\n"
 
     return reply
@@ -136,8 +140,8 @@ def __sanitise_markdown(string):
     :param string: the string to be sanitised.
     :return: sanitised string.
     """
-    return string.replace("#", "")\
-        .replace("*", "")\
-        .replace(">", "")\
-        .replace("+", "")\
+    return string.replace("#", "") \
+        .replace("*", "") \
+        .replace(">", "") \
+        .replace("+", "") \
         .replace("`", "")
