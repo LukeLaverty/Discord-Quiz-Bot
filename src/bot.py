@@ -4,7 +4,7 @@ import re
 import quiz
 from command import general, channel, dm
 
-TOKEN = "NzI0Mjc5ODAxNjk4ODQ0NzIz.XxCCMA.tDM9uFv7Y9AL9RAmJucgyPljS5M"
+TOKEN = ""
 client = discord.Client()
 
 # Dictionary associates each user with an action class.
