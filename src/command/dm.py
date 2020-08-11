@@ -58,7 +58,7 @@ def set_round(current_action, round_name):
     Creates a new round in a quiz.
 
     :param current_action: the current action of the user.
-    :param round_name: the user's parameter input for round name.
+    :param round_name: the user's param b  eter input for round name.
     :return: reply to user.
     """
     if current_action.name == "":

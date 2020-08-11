@@ -87,7 +87,7 @@ class Quiz:
                         reply = str(self.current_question + 1) + ": *now playing* :musical_note:"
 
                     # Checks if current round is picture round:
-                    if self.rounds[self.current_round].is_picture is True:
+                    elif self.rounds[self.current_round].is_picture is True:
                         reply = question
 
                     else:

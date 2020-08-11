@@ -112,7 +112,7 @@ def show_leaderboard(players):
 
         for i in range(len(players)):
             pos = i + 1
-            while i - 1 > 0 and players[i - 1].score == players[i]:
+            while i - 1 > 0 and players[i - 1].points == players[i]:
                 pos -= 1
 
             reply += str(pos) + ". " + __sanitise_markdown(players[i].user.display_name) + " - " + \

@@ -115,9 +115,9 @@ def points(author, action_items, score_add):
     """
     current_quiz = quiz.get_ongoing_quiz(action_items)
 
-    if current_quiz is not None:
+    if current_quiz is not None and current_quiz.current_round > -1:
 
-        if current_quiz.current_question != len(current_quiz.rounds[current_quiz.current_round].questions):
+        if current_quiz.current_question != len(current_quiz.rounds[current_quiz.current_round - 1].questions):
 
             player = current_quiz.contains_player(author)
 
@@ -236,13 +236,10 @@ def select_quiz(author, action_items, command):
             if file_no <= len(files):
                 try:
                     action_items[author] = quiz.Quiz(files[file_no - 1])
-                    reply = "We are ready to go, @everyon, use `?join` to add yourself to the quiz!\n" \
+                    reply = "We are ready to go, @everyone, use `?join` to add yourself to the quiz!\n" \
                             "When we're ready to go, the quiz-master can use `?start` :call_me:"
-                # Where the file was unable to be initialised into a round.
-                except TypeError:
-                    reply = "Sorry, I'm not able to load that quiz :thinking:\nTry another quiz using `?[number]`."
-                # Where the JSON is invalid.
-                except json.JSONDecodeError:
+                # Where the file is invalid.
+                except Exception:
                     reply = "Sorry, that quiz file is not valid :worried:\nTry another quiz using `?[number]`."
 
             else:
